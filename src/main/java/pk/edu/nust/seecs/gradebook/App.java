@@ -3,6 +3,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 import pk.edu.nust.seecs.gradebook.dao.*;
@@ -23,14 +24,17 @@ public class App {
         GradeDao gradeDao = new GradeDao();
         StudentDao studentDao = new StudentDao();
         TeacherDao teacherDao = new TeacherDao();
+//        Clo clo = clodao.getCloById(3);
+//        clo.setName("Name Changed");
+//        clodao.updateClo(clo);
         while(true){
             System.out.println("Enter a choice");
             System.out.println("Add Student");
             System.out.println("Add Teacher");
-            System.out.println("Add Clo");
             System.out.println("Add Course");
-            System.out.println("Add Grade");
+            System.out.println("Add Clo");
             System.out.println("Add Content");
+            System.out.println("Add Grade");
 
             Scanner scanner = new Scanner(System.in);
             int choice = scanner.nextInt();
@@ -40,6 +44,7 @@ public class App {
                 String name = scanner.next();
                 student.setName(name);
                 studentDao.addStudent(student);
+                
             }
             else if(choice == 2){
                 Teacher teacher = new Teacher();
@@ -79,10 +84,20 @@ public class App {
                 String ends = scanner.next();
                 inputDate = dateFormat.parse(ends);
                 course.setEndsOn(inputDate);
+                List<Teacher> teachers = teacherDao.getAllTeachers();
+                System.out.println("Select teacher id from following list");
+                for(int i=0;i<teachers.size();i++){
+                    Teacher teacher = teachers.get(i);
+                    System.out.println('#'+teacher.getTeacherId().toString()+"      Name:"+teacher.getName());
+                }
+                int id = scanner.nextInt();
+                Teacher teacher = teacherDao.getTeacherById(id);
+                course.setTeacher(teacher);
                 courseDao.addCourse(course);
-
+                
             }
-            else if(choice == 5){
+            else if(choice == 6){
+                List<Content> contents = contentDao.getAllContents();
                 Grade grade = new Grade();
                 System.out.println("Enter the name.");
                 String name = scanner.next();
@@ -90,17 +105,26 @@ public class App {
 
                 System.out.println("Enter the Score.");
                 int score = scanner.nextInt();
-                grade.setScore(choice);
+                grade.setScore(score);
+                System.out.println("Select the course id from the following list");
+                Content content;
+                for(int i=0;i<contents.size();i++){
+                    content = contents.get(i);
+                    System.out.println("#"+content.getContentId().toString()+"  Title"+content.getTitle());
+                }
+                int input = scanner.nextInt();
+                grade.setContentItem(contentDao.getContentById(input));
                 gradeDao.addGrade(grade);
+                
             }
-            else if(choice==6){
+            else if(choice==5){
                 Content content = new Content();
                 System.out.println("Enter the Description");
                 String description = scanner.next();
                 content.setDescription(description);
                 System.out.println("Enter the Start Date");
                 String start = scanner.next();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
                 Date inputDate = dateFormat.parse(start);
                 content.setStarttime(inputDate);
                 System.out.println("Enter the End date of the course");
@@ -110,8 +134,20 @@ public class App {
                 System.out.println("Enter the title of the course");
                 String title = scanner.next();
                 content.setTitle(title);
+                System.out.println("Select course id from following table");
+                List<Course> courses = courseDao.getAllCourses();
+                for(int i=0;i<courses.size();i++){
+                    Course course = courses.get(i);
+                    System.out.println('#'+course.getCourseid().toString()+"   Name:"+course.getClasstitle());
+                }
+                int id = scanner.nextInt();
+                Course course = courseDao.getCourseById(id);
+                content.setCourse(course);
+                contentDao.addContent(content);
+                
             }
         }
+        
 //        // Add new clo
 //        Clo clo = new Clo();
 //        clo.setName("CLO 1");
